@@ -1,4 +1,4 @@
-public class Trigger {
+public class AcceptTest {
     public static int reverse(int x) {
         int rsl = 0;
         while (x != 0) {
