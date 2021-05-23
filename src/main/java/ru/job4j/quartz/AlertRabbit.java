@@ -18,18 +18,24 @@ public class AlertRabbit implements AutoCloseable {
     Connection connect;
 
     /**
-     * Читаем файл конфигурации и устанавливаем соединение с БД Postgre
+     * Читаем файл конфигурации и передаем настройки в поле properties
+     */
+    private void readConfig() {
+        properties = new Properties();
+        ClassLoader loader = AlertRabbit.class.getClassLoader();
+        try (InputStream io = loader.getResourceAsStream("rabbit.properties")) {
+            properties.load(io);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    /**
+     * Устанавливаем соединение с БД Postgre
      * @return возвращает объект Connection.
      */
     private Connection initConnection() {
         try {
-            properties = new Properties();
-            ClassLoader loader = AlertRabbit.class.getClassLoader();
-            try (InputStream io = loader.getResourceAsStream("rabbit.properties")) {
-                properties.load(io);
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
             connect = null;
             Class.forName(properties.getProperty("jdbc.driver"));
             String url = properties.getProperty("jdbc.url");
@@ -47,6 +53,8 @@ public class AlertRabbit implements AutoCloseable {
 
     public static void main(String[] args) {
         AlertRabbit rabbit = new AlertRabbit();
+        rabbit.readConfig();
+        int workInterval = rabbit.timeInterval();
         try (Connection cn = rabbit.initConnection()) {
             Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
             scheduler.start();
@@ -56,7 +64,7 @@ public class AlertRabbit implements AutoCloseable {
                     .usingJobData(data)
                     .build();
             SimpleScheduleBuilder times = simpleSchedule()
-                    .withIntervalInSeconds(5)
+                    .withIntervalInSeconds(workInterval)
                     .repeatForever();
             Trigger trigger = newTrigger()
                     .startNow()
@@ -69,6 +77,14 @@ public class AlertRabbit implements AutoCloseable {
         } catch (Exception se) {
             se.printStackTrace();
         }
+    }
+
+    /**
+     * Читаем из properties интервал работы scheduler
+     * @return интервал работы типа int.
+     */
+    private int timeInterval() {
+        return Integer.parseInt(properties.getProperty("rabbit.timeInterval"));
     }
 
     public static class Rabbit implements Job {
