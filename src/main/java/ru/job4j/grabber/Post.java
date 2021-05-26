@@ -10,6 +10,17 @@ public class Post {
     private String link;
     private LocalDateTime created;
 
+    public Post() {
+    }
+
+    public Post(int id, String heading, String details, String link, LocalDateTime created) {
+        idPrimaryKey = id;
+        this.heading = heading;
+        this.details = details;
+        this.link = link;
+        this.created = created;
+    }
+
     public int getIdPrimaryKey() {
         return idPrimaryKey;
     }

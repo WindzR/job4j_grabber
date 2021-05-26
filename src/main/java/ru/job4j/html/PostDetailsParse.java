@@ -6,28 +6,39 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PostDetailsParse {
-    private static final String LINK = "https://www.sql.ru/forum/1325330/lidy-be-fe-senior-cistemnye-analitiki-qa-i-devops-moskva-do-200t";
+    private String link = "https://www.sql.ru/forum/1336352/saratov-net-engineer-middle-full-time-60-80k";
+    private List<String> details = new ArrayList<>();
 
-    public static void main(String[] args) {
-        var details = new PostDetailsParse();
-        details.parsing(LINK);
+    public PostDetailsParse() {
     }
 
-    private void parsing(String parseLink) {
+    public PostDetailsParse(String link) {
+        this.link = link;
+    }
+
+    public static void main(String[] args) {
+        PostDetailsParse details = new PostDetailsParse();
+        details.parsing(details.link);
+    }
+
+    public List<String> parsing(String parseLink) {
         try {
             Document doc = Jsoup.connect(parseLink).get();
             String description = description(doc);
-            System.out.println(description);
+            details.add(description);
+//            System.out.println(description);
             String footer = dateParse(doc);
             String date = dateFind(footer);
-            System.out.println(date);
+            details.add(date);
+//            System.out.println(date);
         } catch (IOException ex) {
             ex.printStackTrace();
         }
+        return details;
     }
 
     /**
@@ -62,16 +73,20 @@ public class PostDetailsParse {
 
     /**
      * Находит дату объявления по определенной маске в футере объявления
+     * находит либо в формате ("dd-MMM-yy, hh:mm"), либо ("вчера/сегодня, hh:mm")
      * @param parse футер объявления
      * @return дату в формате сайта sql.ru.
      */
     private String dateFind(String parse) {
-        String date = "Error data search![dateFind]";
-        Pattern pattern = Pattern.compile("\\d{2}\\s\\D{3}\\s\\d{2}\\W\\s\\d{2}\\W\\d{2}");
-        Matcher matcher = pattern.matcher(parse);
-        while (matcher.find()) {
-            date = parse.substring(matcher.start(), matcher.end());
-        }
-        return date;
+//        String date = "Error data search![dateFind]";
+        String rsl = parse.substring(0, parse.indexOf("["));
+//        Pattern patternS = Pattern.compile("\\d{2}\\s\\D{3}\\s\\d{2}\\W\\s\\d{2}\\W\\d{2}");
+//        Pattern patternT = Pattern.compile("\\D{5,7}\\W\\s\\d{2}\\W\\d{2}");
+//        Matcher matcherS = patternS.matcher(parse);
+//        Matcher matcherT = patternT.matcher(parse);
+//        while (matcherS.find()) {
+//            date = parse.substring(matcherS.start(), matcherS.end());
+//        }
+        return rsl;
     }
 }
