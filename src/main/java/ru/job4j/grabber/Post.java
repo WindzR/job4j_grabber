@@ -66,4 +66,15 @@ public class Post {
     public int hashCode() {
         return Objects.hash(idPrimaryKey, link, created);
     }
+
+    @Override
+    public String toString() {
+        return "Post{"
+                + "idPrimaryKey=" + idPrimaryKey
+                + ", heading='" + heading + '\''
+                + ", details='" + details + '\''
+                + ", link='" + link + '\''
+                + ", created=" + created
+                + '}';
+    }
 }
