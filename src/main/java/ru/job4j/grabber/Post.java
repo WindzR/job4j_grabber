@@ -4,68 +4,50 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Post {
-    private String url;
-    private String theme;
-    private String description;
-    private String author;
-    private int answers;
-    private int views;
-    private LocalDateTime date;
+    private int idPrimaryKey;
+    private String heading;
+    private String details;
+    private String link;
+    private LocalDateTime created;
 
-    public String getUrl() {
-        return url;
+    public int getIdPrimaryKey() {
+        return idPrimaryKey;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    public void setIdPrimaryKey(int idPrimaryKey) {
+        this.idPrimaryKey = idPrimaryKey;
     }
 
-    public String getTheme() {
-        return theme;
+    public String getHeading() {
+        return heading;
     }
 
-    public void setTheme(String theme) {
-        this.theme = theme;
+    public void setHeading(String heading) {
+        this.heading = heading;
     }
 
-    public String getDescription() {
-        return description;
+    public String getDetails() {
+        return details;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setDetails(String details) {
+        this.details = details;
     }
 
-    public String getAuthor() {
-        return author;
+    public String getLink() {
+        return link;
     }
 
-    public void setAuthor(String author) {
-        this.author = author;
+    public void setLink(String link) {
+        this.link = link;
     }
 
-    public int getAnswers() {
-        return answers;
+    public LocalDateTime getCreated() {
+        return created;
     }
 
-    public void setAnswers(int answers) {
-        this.answers = answers;
-    }
-
-    public int getViews() {
-        return views;
-    }
-
-    public void setViews(int views) {
-        this.views = views;
-    }
-
-    public LocalDateTime getDate() {
-        return date;
-    }
-
-    public void setDate(LocalDateTime date) {
-        this.date = date;
+    public void setCreated(LocalDateTime created) {
+        this.created = created;
     }
 
     @Override
@@ -77,25 +59,11 @@ public class Post {
             return false;
         }
         Post post = (Post) o;
-        return url.equals(post.url) && Objects.equals(theme, post.theme)
-                && author.equals(post.author) && date.equals(post.date);
+        return idPrimaryKey == post.idPrimaryKey && Objects.equals(link, post.link) && created.equals(post.created);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(url, theme, author, date);
-    }
-
-    @Override
-    public String toString() {
-        return "Post{"
-                + "url='" + url + '\''
-                + ", theme='" + theme + '\''
-                + ", description='" + description + '\''
-                + ", author='" + author + '\''
-                + ", answers=" + answers
-                + ", views=" + views
-                + ", date=" + date
-                + '}';
+        return Objects.hash(idPrimaryKey, link, created);
     }
 }
