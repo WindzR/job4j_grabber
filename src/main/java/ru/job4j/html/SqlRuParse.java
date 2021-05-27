@@ -41,16 +41,15 @@ public class SqlRuParse implements Parse {
             for (Element td : row) {
                 Element href = td.child(0);
                 String link = href.attr("href");
-                Post post1 = detail(link);
-                post1.setIdPrimaryKey(id++);
+                Post post = detail(link);
 //                System.out.println(link);
-                post1.setLink(link);
+                post.setLink(link);
                 String heading = href.text();
-                post1.setHeading(heading);
+                post.setHeading(heading);
 //                System.out.println(heading);
                 Element dateMain = td.parent().child(5);
 //                System.out.println(dateMain.text());
-                postList.add(post1);
+                postList.add(post);
             }
         } catch (IOException ex) {
             ex.printStackTrace();
