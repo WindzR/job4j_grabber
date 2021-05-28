@@ -2,6 +2,7 @@ package ru.job4j.grabber;
 
 import ru.job4j.quartz.AlertRabbit;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.sql.*;
 import java.time.LocalDateTime;
@@ -13,18 +14,16 @@ public class PsqlStore implements Store, AutoCloseable {
     private Connection cnn;
 
     public PsqlStore(Properties cfg) {
-        ClassLoader loader = PsqlStore.class.getClassLoader();
-        try (InputStream io = loader.getResourceAsStream("rabbit.properties")) {
-            cfg.load(io);
+        try {
             Class.forName(cfg.getProperty("jdbc.driver"));
             String url = cfg.getProperty("jdbc.url");
             String login = cfg.getProperty("jdbc.username");
             String password = cfg.getProperty("jdbc.password");
             cnn = DriverManager.getConnection(url, login, password);
-
-        } catch (Exception e) {
-            throw new IllegalStateException(e);
+        } catch (SQLException | ClassNotFoundException ex) {
+            ex.printStackTrace();
         }
+
     }
 
     /**
@@ -83,10 +82,11 @@ public class PsqlStore implements Store, AutoCloseable {
     @Override
     public Post findById(String id) {
         Post result = null;
-        try (PreparedStatement statement = cnn.prepareStatement("SELECT * FROM post WHERE id = ?")) {
+        String sql = "SELECT * FROM post WHERE id = ?";
+        try (PreparedStatement statement = cnn.prepareStatement(sql)) {
+            statement.setInt(1, Integer.parseInt(id));
             try (ResultSet resultSet = statement.executeQuery()) {
-                statement.setInt(1, Integer.parseInt(id));
-                while (resultSet.next()) {
+                if (resultSet.next()) {
                     result = new Post(
                             resultSet.getInt("id"),
                             resultSet.getString("name"),
@@ -96,7 +96,7 @@ public class PsqlStore implements Store, AutoCloseable {
                     );
                 }
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return result;
@@ -110,17 +110,24 @@ public class PsqlStore implements Store, AutoCloseable {
     }
 
     public static void main(String[] args) {
-        PsqlStore store = new PsqlStore(new Properties());
-        for (int i = 1; i <= 6; i++) {
-            String pg = String.valueOf(i + 10);
-            Post post = new Post(1, "Heading", "Some text", "https://www.sql.ru/forum/job-offers/" + pg, LocalDateTime.of(2021, 5, (i + 1), 8, i));
-            store.save(post);
+        Properties cfg = new Properties();
+        ClassLoader loader = AlertRabbit.class.getClassLoader();
+        try (InputStream io = loader.getResourceAsStream("rabbit.properties")) {
+            cfg.load(io);
+        } catch (IOException ex) {
+            ex.printStackTrace();
         }
+        PsqlStore store = new PsqlStore(cfg);
+//        for (int i = 1; i <= 6; i++) {
+//            String pg = String.valueOf(i + 10);
+//            Post post = new Post(1, "Heading", "Some text", "https://www.sql.ru/forum/job-offers/" + pg, LocalDateTime.of(2021, 5, (i + 1), 8, i));
+//            store.save(post);
+//        }
         List<Post> list = store.getAll();
         for (Post post: list) {
             System.out.println(post);
         }
-        int searchId = list.get(0).getIdPrimaryKey();
-        System.out.println("Объявление с id = searchId --> " + store.findById(String.valueOf(searchId)));
+        Post test = store.findById(String.valueOf(2));
+        System.out.println(test);
     }
 }
