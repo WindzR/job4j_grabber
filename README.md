@@ -5,4 +5,16 @@
 
 ### This project represents a job aggregator.
 
+### ***Instruments & tools*** :
+
+
+![maven](./pics/maven(md).png)
+![postgre](./pics/Postgresql-logo_min.png)
+![github](./pics/github-logo_min.jpg)
+![checkstyle](./pics/checkstyle%20(md).png)
+![JUnit](./pics/junit(md).png)
+![intellij idea](./pics/intellij(md).jpg)
+![jsoup](./pics/jsoup(md).jpg)
+![liquibase](./pics/liqui(md).png)
+
 
