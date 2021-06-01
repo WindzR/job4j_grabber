@@ -12,6 +12,10 @@ import java.util.Properties;
 public class PsqlStore implements Store, AutoCloseable {
     private Connection cnn;
 
+    public PsqlStore(Connection connection) {
+        this.cnn = connection;
+    }
+
     public PsqlStore(Properties cfg) {
         try {
             Class.forName(cfg.getProperty("jdbc.driver"));
