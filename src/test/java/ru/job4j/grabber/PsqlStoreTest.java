@@ -1,7 +1,5 @@
 package ru.job4j.grabber;
 
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.sql.Connection;
@@ -33,9 +31,9 @@ public class PsqlStoreTest {
     @Test
     public void whenSaveItem() {
         try (PsqlStore store = new PsqlStore(ConnectionRollback.create(this.init()))) {
-            Post post = new Post(1, "heading", "Text of vacancy"
-                    , "https://www.sql.ru/forum/job-offers/3"
-                    , LocalDateTime.of(2021, 5, 1, 0, 0));
+            Post post = new Post(1, "heading", "Text of vacancy",
+                    "https://www.sql.ru/forum/job-offers/3",
+                    LocalDateTime.of(2021, 5, 1, 0, 0));
             store.save(post);
             List<Post> list = store.getAll();
             assertThat(list.get(0), is(post));
@@ -47,9 +45,9 @@ public class PsqlStoreTest {
     @Test
     public void whenSaveThenSearchById() {
         try (PsqlStore store = new PsqlStore(ConnectionRollback.create(this.init()))) {
-            Post post = new Post(1, "heading", "Text of vacancy"
-                    , "https://www.sql.ru/forum/job-offers/3"
-                    , LocalDateTime.of(2021, 5, 1, 0, 0));
+            Post post = new Post(1, "heading", "Text of vacancy",
+                    "https://www.sql.ru/forum/job-offers/3",
+                    LocalDateTime.of(2021, 5, 1, 0, 0));
             store.save(post);
             List<Post> list = store.getAll();
             int searchId = list.get(0).getIdPrimaryKey();
